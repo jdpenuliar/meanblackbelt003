@@ -8,7 +8,6 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname,"./client")));
 require("./server/config/mongoose.js");
 require("./server/config/routes.js")(app);
-
-app.listen(8000,function(){
-	console.log("haha on 8000")
+app.listen(8000, function(){
+	console.log("haha on 8000");
 });
