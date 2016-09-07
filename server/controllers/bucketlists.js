@@ -10,33 +10,31 @@ module.exports = (function(){
 					console.log("--------------------------errsaved\n",err)
 				}else{
 					console.log("--------------------------saved\n",data);
-				}
-				
-			});
-			for(userId in req.body.bucketlistItemOwner){
-				User.findOne({_id: req.body.bucketlistItemOwner[userId]},function(err,data){
-					if(err){
-						res.json(err);
-					}else{
-						data.bucketList.push(newBucketlistItem);
-						data.save(function(err,data){
+					for(userId in req.body.bucketlistItemOwner){
+						User.findOne({_id: req.body.bucketlistItemOwner[userId]},function(err,data){
 							if(err){
 								res.json(err);
 							}else{
-
+								data.bucketList.push(newBucketlistItem);
+								data.save(function(err,data){
+									if(err){
+										res.json(err);
+									}else{
+										User.findOne({_id: req.body.activeUserId}).populate("bucketList").exec(function(err,data){
+											if(err){
+												res.json(err);
+											}else{
+												console.log("--------------------------reload active user\n",data);
+												res.json(data);
+											}
+										});
+									}
+								});
 							}
 						});
 					}
-				});
-			}
-
-			User.findOne({_id: req.body.activeUserId}).populate("bucketList").exec(function(err,data){
-				if(err){
-					res.json(err);
-				}else{
-					console.log("--------------------------reload active user\n",data)
-					res.json(data)
 				}
+				
 			});
 		},
 		changeStatus: function(req,res){

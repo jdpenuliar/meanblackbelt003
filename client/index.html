@@ -55,14 +55,15 @@
 			var users = [];
 			factory.create = function(info,callback){
 				$http.post("/bucketlist",info).then(function(data){
-					// activeUser = data;
-					// callback(activeUser);
+					activeUser = data;
+					console.log("-------------factory\n",activeUser);
+					callback(activeUser);
 				});
 			}
 			factory.changeBucketListItemStatus = function(info,callback){
 				$http.post("/bucketlist/"+info+"/changestatus").then(function(data){
-					// activeUser = data;
-					// callback(activeUser);
+					activeUser = data;
+					callback(activeUser);
 				});
 			}
 			return factory;
@@ -71,7 +72,6 @@
 			$scope.activeUser = {}
 			usersFactory.getActiveUser(function(data){
 				$scope.activeUser = data;
-				console.log("asdf");
 				if(Object.keys($scope.activeUser).length === 0){
 					$location.url("/");
 				}
@@ -88,13 +88,8 @@
 					$scope.newBucketlistItem.bucketlistItemOwner.push($scope.newBucketlistItem.bucketListItemTaggedUser);
 				}
 				bucketlistFactory.create($scope.newBucketlistItem,function(data){
-					usersFactory.getActiveUser(function(data){
-						$scope.activeUser = data;
-						console.log("asdf");
-						if(Object.keys($scope.activeUser).length === 0){
-							$location.url("/");
-						}
-					});
+					console.log("-------------controller\n",data);
+					$scope.activeUser = data;
 				});
 				$scope.newBucketlistItem = {};
 				
@@ -105,7 +100,6 @@
 				});
 				usersFactory.getActiveUser(function(data){
 					$scope.activeUser = data;
-					console.log("asdf");
 					if(Object.keys($scope.activeUser).length === 0){
 						$location.url("/");
 					}
