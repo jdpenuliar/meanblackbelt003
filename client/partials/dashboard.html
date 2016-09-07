@@ -1,0 +1,34 @@
+<div ng-controller="DashboardController">
+	<p>Bucketlist <a href="#/dashboard">Home</a> <a href="/">Lougout</a>
+	<h2>Welcome, {{activeUser.data.userName}}!</h2>
+	<form name='newBucketListItemForm'>
+		<label><input type="text" placeholder="Title" name="newBucketlistItemTitle" ng-model="newBucketlistItem.bucketListItemTitle" ng-minlength='5' required></label>
+		<label><input type="text" placeholder="Description" name="newBucketlistItemDescription" ng-model="newBucketlistItem.bucketListItemDescription" ng-minlength='10' required></label>
+		<label>
+			<select name="newBucketlistItemTaggedUser" ng-model="newBucketlistItem.bucketListItemTaggedUser">
+				<option ng-repeat="user in users.data" value="{{user._id}}">{{user.userName}}</option>
+			</select>
+		</label>
+		<button ng-click="addNewBucketListItem()" ng-disabled="newBucketListItemForm.$invalid">Add to list</button>
+	</form>
+	<div ng-messages = "newBucketListItemForm.newBucketlistItemTitle.$error">
+		<p ng-message="minlength">Ttitle must be atleast 5 characters long</p>
+		<p ng-message="required">Title is required</p>
+	</div>
+	<div ng-messages = "newBucketListItemForm.newBucketlistItemDescription.$error">
+		<p ng-message="minlength">Description must be atleast 10 characters long</p>
+		<p ng-message="required">Description is required</p>
+	</div>
+	<form name='bucketListItemList'>
+		<div ng-repeat="bucketListItem in activeUser.data.bucketList track by $index">
+			<div ng-if="bucketlistItem.bucketListItemStatus == 'done'">
+				<input type="checkbox" ng-model="doneBucketlistItem" checked="true" ng-change="changeBucketListItemStatus('{{bucketListItem._id}}')">{{bucketListItem.bucketListItemTitle}}
+			</div>
+			<div ng-if="bucketlistItem.bucketListItemStatus != 'pending'">
+				<input type="checkbox" ng-model="doneBucketlistItem" checked="false" ng-change="changeBucketListItemStatus('{{bucketListItem._id}}')">{{bucketListItem.bucketListItemTitle}}
+			</div>
+		</div>
+	</form>
+	<p>list of other users (click to view profile)</p>
+	<p ng-repeat="user in users.data"><a href="#/user/{{user._id}}">{{user.userName}}</a></p>
+</div>

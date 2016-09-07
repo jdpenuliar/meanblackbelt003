@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<title>MEAN bucketlist</title>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+	<script>
+		var myAppModule = angular.module("myApp",["ngRoute","ngMessages"]);
+		myAppModule.config(function($routeProvider){
+			$routeProvider
+			.when("/",{
+				templateUrl: "partials/landing.html"
+			})
+			.when("/dashboard",{
+				templateUrl: "partials/dashboard.html"
+			})
+			.when("/user/:id",{
+				templateUrl: "partials/users.html"
+			})
+			.otherwise({
+				redirectTo: "/dashboard"
+			});
+		});
+		myAppModule.factory("usersFactory",function($http){
+			var factory = {};
+			var activeUser = {};
+			var users = [];
+			factory.create = function(info,callback){
+				$http.post("/users",info).then(function(data){
+					activeUser = data;
+					callback(activeUser);
+				});
+			}
+			factory.getActiveUser = function(callback){
+				callback(activeUser);
+			}
+			factory.getSpecificUser = function(info,callback){
+				$http.get("/users/"+info).then(function(data){
+					users = data;
+					callback(users);
+				})
+			}
+			factory.index = function(info,callback){
+				$http.get("/users/activeUser/"+info).then(function(data){
+					users = data;
+					callback(users);
+				})
+			}
+			return factory;
+		});
+		myAppModule.factory("bucketlistFactory",function($http){
+			var factory = {};
+			var activeUser = {};
+			var users = [];
+			factory.create = function(info,callback){
+				$http.post("/bucketlist",info).then(function(data){
+					// activeUser = data;
+					// callback(activeUser);
+				});
+			}
+			factory.changeBucketListItemStatus = function(info,callback){
+				$http.post("/bucketlist/"+info+"/changestatus").then(function(data){
+					// activeUser = data;
+					// callback(activeUser);
+				});
+			}
+			return factory;
+		});
+		myAppModule.controller("DashboardController",function($scope,$location,usersFactory,bucketlistFactory){
+			$scope.activeUser = {}
+			usersFactory.getActiveUser(function(data){
+				$scope.activeUser = data;
+				console.log("asdf");
+				if(Object.keys($scope.activeUser).length === 0){
+					$location.url("/");
+				}
+			});
+			usersFactory.index($scope.activeUser.data._id,function(data){
+				$scope.users = data;
+			});
+			$scope.addNewBucketListItem = function(){
+				$scope.newBucketlistItem.bucketListItemStatus = "pending"
+				$scope.newBucketlistItem.bucketlistItemOwner = [];
+				$scope.newBucketlistItem.bucketlistItemOwner.push($scope.activeUser.data._id);
+				$scope.newBucketlistItem.activeUserId = $scope.activeUser.data._id;
+				if($scope.newBucketlistItem.bucketListItemTaggedUser){
+					$scope.newBucketlistItem.bucketlistItemOwner.push($scope.newBucketlistItem.bucketListItemTaggedUser);
+				}
+				bucketlistFactory.create($scope.newBucketlistItem,function(data){
+					usersFactory.getActiveUser(function(data){
+						$scope.activeUser = data;
+						console.log("asdf");
+						if(Object.keys($scope.activeUser).length === 0){
+							$location.url("/");
+						}
+					});
+				});
+				$scope.newBucketlistItem = {};
+				
+			}
+			$scope.changeBucketListItemStatus = function(bucketlistitem){
+				bucketlistFactory.changeBucketListItemStatus(bucketlistitem,function(data){
+					
+				});
+				usersFactory.getActiveUser(function(data){
+					$scope.activeUser = data;
+					console.log("asdf");
+					if(Object.keys($scope.activeUser).length === 0){
+						$location.url("/");
+					}
+				});
+			}
+		});
+		myAppModule.controller("LandingController",function($scope,$location,usersFactory){
+			$scope.login = function(){
+				usersFactory.create($scope.user,function(data){
+					$scope.activeUser = data;
+					if(Object.keys($scope.activeUser).length !== 0){
+						$location.url("/dashboard");
+					}else{
+						$location.url("/");
+					}
+					
+				});
+			}
+		});
+
+		myAppModule.controller("UserController",function($scope,$location,$routeParams,usersFactory){
+			usersFactory.getActiveUser(function(data){
+				$scope.activeUser = data;
+				if(Object.keys($scope.activeUser).length === 0){
+					$location.url("/");
+				}
+			});
+			console.log($routeParams);
+			usersFactory.getSpecificUser($routeParams.id,function(data){
+				$scope.specificUser = data;
+			});
+		});
+	</script>
+</head>
+<body>
+	<div ng-view="">
+	</div>
+</body>
+</html>
