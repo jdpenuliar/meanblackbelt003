@@ -56,12 +56,11 @@
 			factory.create = function(info,callback){
 				$http.post("/bucketlist",info).then(function(data){
 					activeUser = data;
-					console.log("-------------factory\n",activeUser);
 					callback(activeUser);
 				});
 			}
 			factory.changeBucketListItemStatus = function(info,callback){
-				$http.post("/bucketlist/"+info+"/changestatus").then(function(data){
+				$http.post("/bucketlist/changestatus",info).then(function(data){
 					activeUser = data;
 					callback(activeUser);
 				});
@@ -88,21 +87,18 @@
 					$scope.newBucketlistItem.bucketlistItemOwner.push($scope.newBucketlistItem.bucketListItemTaggedUser);
 				}
 				bucketlistFactory.create($scope.newBucketlistItem,function(data){
-					console.log("-------------controller\n",data);
 					$scope.activeUser = data;
 				});
 				$scope.newBucketlistItem = {};
 				
 			}
-			$scope.changeBucketListItemStatus = function(bucketlistitem){
-				bucketlistFactory.changeBucketListItemStatus(bucketlistitem,function(data){
-					
-				});
-				usersFactory.getActiveUser(function(data){
+			$scope.changeBucketListItemStatus = function(bucketlistitem,activeuserid){
+				var info = {};
+				info.bucketListItemId = bucketlistitem;
+				info.activeUserId = activeuserid;
+				
+				bucketlistFactory.changeBucketListItemStatus(info,function(data){
 					$scope.activeUser = data;
-					if(Object.keys($scope.activeUser).length === 0){
-						$location.url("/");
-					}
 				});
 			}
 		});
@@ -115,7 +111,6 @@
 					}else{
 						$location.url("/");
 					}
-					
 				});
 			}
 		});

@@ -1,9 +1,9 @@
 <div ng-controller="UserController">
-	<p>Bucketlist <a href="#/dashboard">Home</a> <a href="/">Lougout</a></p>
+	<p>Bucketlist <a href="#/dashboard">Home</a> <a href="/">Logout</a></p>
 	<h3>{{specificUser.data.userName}}'s Bucketlist</h3>
 	<h3>Done</h3>
 	<div ng-repeat="bucketlistItem in specificUser.data.bucketList">
-		<p ng-show="bucketlistItem.bucketListItemStatus == 'done'"><input type="checkbox" checked>{{bucketlistItem.bucketListItemTitle}}</p>
+		<p ng-show="bucketlistItem.bucketListItemStatus == 'done'"><input type="checkbox" checked disabled>{{bucketlistItem.bucketListItemTitle}}</p>
 	</div>
 	<h3>Pending</h3>
 	<div ng-repeat="bucketlistItem in specificUser.data.bucketList">

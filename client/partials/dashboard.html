@@ -1,5 +1,5 @@
 <div ng-controller="DashboardController">
-	<p>Bucketlist <a href="#/dashboard">Home</a> <a href="/">Lougout</a>
+	<p>Bucketlist <a href="#/dashboard">Home</a> <a href="/">Logout</a>
 	<h2>Welcome, {{activeUser.data.userName}}!</h2>
 	<form name='newBucketListItemForm'>
 		<label><input type="text" placeholder="Title" name="newBucketlistItemTitle" ng-model="newBucketlistItem.bucketListItemTitle" ng-minlength='5' required></label>
@@ -21,12 +21,7 @@
 	</div>
 	<form name='bucketListItemList'>
 		<div ng-repeat="bucketListItem in activeUser.data.bucketList track by $index">
-			<div ng-if="bucketlistItem.bucketListItemStatus == 'done'">
-				<input type="checkbox" ng-model="doneBucketlistItem" checked="true" ng-change="changeBucketListItemStatus('{{bucketListItem._id}}')">{{bucketListItem.bucketListItemTitle}}
-			</div>
-			<div ng-if="bucketlistItem.bucketListItemStatus != 'pending'">
-				<input type="checkbox" ng-model="doneBucketlistItem" checked="false" ng-change="changeBucketListItemStatus('{{bucketListItem._id}}')">{{bucketListItem.bucketListItemTitle}}
-			</div>
+			<input type="checkbox" name="" ng-checked="bucketListItem.bucketListItemStatus == 'done'">{{bucketListItem.bucketListItemTitle}}<br>
 		</div>
 	</form>
 	<p>list of other users (click to view profile)</p>

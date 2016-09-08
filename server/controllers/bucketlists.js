@@ -38,7 +38,8 @@ module.exports = (function(){
 			});
 		},
 		changeStatus: function(req,res){
-			Bucketlist.findOne({_id: req.params.id},function(err,data){
+			// console.log("--------------------------haha\n",req.body);
+			Bucketlist.findOne({_id: req.body.bucketListItemId},function(err,data){
 				if (err){
 					res.json(err);
 				}else{
@@ -49,7 +50,14 @@ module.exports = (function(){
 					}
 					data.save();
 					console.log(data);
-					res.json(data);
+					User.findOne({_id: req.body.activeUserId}).populate("bucketList").exec(function(err,data){
+						if(err){
+							res.json(err);
+						}else{
+							console.log("--------------------------reload active user\n",data);
+							res.json(data);
+						}
+					});
 				}
 			});
 		
