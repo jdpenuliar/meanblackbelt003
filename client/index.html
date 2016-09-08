@@ -106,6 +106,7 @@
 			$scope.login = function(){
 				usersFactory.create($scope.user,function(data){
 					$scope.activeUser = data;
+					console.log("-------------\n",$scope.activeUser);
 					if(Object.keys($scope.activeUser).length !== 0){
 						$location.url("/dashboard");
 					}else{
